@@ -125,21 +125,37 @@ class Editor:
         # Установка пределов графика для корректного отображения фигур
             # Вычисляем минимальное и максимальное значение координат X и Y
 
-        x_min = min([shape.x if isinstance(shape, Point) else min(shape.start.x, shape.end.x)
-                             if isinstance(shape, Line) else shape.center.x - shape.radius
-                             if isinstance(shape, Circle) else shape.top_left.x for shape in self.shapes])
+        x_min = min([
+            shape.x if isinstance(shape, Point)                               # Для точки
+            else min(shape.start.x, shape.end.x) if isinstance(shape, Line)   # Для отрезка
+            else shape.center.x - shape.radius if isinstance(shape, Circle)   # Для круга
+            else shape.top_left.x                                             # Для квадрата (левая граница)
+            for shape in self.shapes
+        ])
 
-        x_max = max([shape.x if isinstance(shape, Point) else max(shape.start.x, shape.end.x)
-                             if isinstance(shape, Line) else shape.center.x + shape.radius
-                             if isinstance(shape, Circle) else shape.top_left.x + shape.side_length for shape in self.shapes])
+        x_max = max([
+            shape.x if isinstance(shape, Point)                              # Для точки
+            else max(shape.start.x, shape.end.x) if isinstance(shape, Line)  # Для линии
+            else shape.center.x + shape.radius if isinstance(shape, Circle)  # Для круга
+            else shape.top_left.x + shape.side_length                        # Для квадрата (правая граница)
+            for shape in self.shapes
+        ])
 
-        y_min = min([shape.y if isinstance(shape, Point) else min(shape.start.y, shape.end.y)
-                             if isinstance(shape, Line) else shape.center.y - shape.radius
-                             if isinstance(shape, Circle) else shape.top_left.y - shape.side_length for shape in self.shapes])
+        y_min = min([
+            shape.y if isinstance(shape, Point)                              # Для точки
+            else min(shape.start.y, shape.end.y) if isinstance(shape, Line)  # Для линии
+            else shape.center.y - shape.radius if isinstance(shape, Circle)  # Для круга
+            else shape.top_left.y - shape.side_length                        # Для квадрата (нижняя граница)
+            for shape in self.shapes
+        ])
 
-        y_max = max([shape.y if isinstance(shape, Point) else max(shape.start.y, shape.end.y)
-                             if isinstance(shape, Line) else shape.center.y + shape.radius
-                             if isinstance(shape, Circle) else shape.top_left.y for shape in self.shapes])
+        y_max = max([
+            shape.y if isinstance(shape, Point)                              # Для точки
+            else max(shape.start.y, shape.end.y) if isinstance(shape, Line)  # Для линии
+            else shape.center.y + shape.radius if isinstance(shape, Circle)  # Для круга
+            else shape.top_left.y                                            # Для квадрата (верхняя граница)
+            for shape in self.shapes
+        ])
 
             # к пределам добавляем отступ -1 и +1, чтобы фигуры не прилипали к краям графика
         ax.set_xlim(x_min - 1, x_max + 1)
