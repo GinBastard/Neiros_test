@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 import matplotlib.pyplot as plt
 
-
 # Создаем классы фигур
 # У каждого класса есть свои атрибуты и метод для отображения информации о себе
 @dataclass
@@ -47,9 +46,9 @@ def plot_shape(shape, ax):
     if isinstance(shape, Point):
         ax.plot(shape.x, shape.y, 'ro')  # Точка (красный круг)
     elif isinstance(shape, Line):
-        ax.plot([shape.start.x, shape.end.x], [shape.start.y, shape.end.y], 'b-')  # Линия (синяя линия)
+        ax.plot([shape.start.x, shape.end.x], [shape.start.y, shape.end.y], 'blue')  # Линия (синяя линия)
     elif isinstance(shape, Circle):
-        circle = plt.Circle((shape.center.x, shape.center.y), shape.radius, color='g', fill=False)  # Круг (зеленый круг)
+        circle = plt.Circle((shape.center.x, shape.center.y), shape.radius, color='green', fill=False)  # Круг (зеленый круг)
         ax.add_patch(circle)
     elif isinstance(shape, Square):
         rect = plt.Rectangle((shape.top_left.x, shape.top_left.y), shape.side_length, shape.side_length, color='orange', fill=False)  # Квадрат (оранжевый квадрат)
@@ -124,6 +123,8 @@ class Editor:
             plot_shape(shape, ax)
 
         # Установка пределов графика для корректного отображения фигур
+            # Вычисляем минимальное и максимальное значение координат X и Y
+
         x_min = min([shape.x if isinstance(shape, Point) else min(shape.start.x, shape.end.x)
                              if isinstance(shape, Line) else shape.center.x - shape.radius
                              if isinstance(shape, Circle) else shape.top_left.x for shape in self.shapes])
@@ -140,6 +141,7 @@ class Editor:
                              if isinstance(shape, Line) else shape.center.y + shape.radius
                              if isinstance(shape, Circle) else shape.top_left.y for shape in self.shapes])
 
+            # к пределам добавляем отступ -1 и +1, чтобы фигуры не прилипали к краям графика
         ax.set_xlim(x_min - 1, x_max + 1)
         ax.set_ylim(y_min - 1, y_max + 1)
 
