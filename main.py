@@ -52,8 +52,7 @@ def plot_shape(shape, ax):
         circle = plt.Circle((shape.center.x, shape.center.y), shape.radius, color='g', fill=False)  # Круг (зеленый круг)
         ax.add_patch(circle)
     elif isinstance(shape, Square):
-        rect = plt.Rectangle((shape.top_left.x, shape.top_left.y), shape.side_length, shape.side_length, color='orange',
-                             fill=False)  # Квадрат (оранжевый квадрат)
+        rect = plt.Rectangle((shape.top_left.x, shape.top_left.y), shape.side_length, shape.side_length, color='orange', fill=False)  # Квадрат (оранжевый квадрат)
         ax.add_patch(rect)
 
 
@@ -125,18 +124,21 @@ class Editor:
             plot_shape(shape, ax)
 
         # Установка пределов графика для корректного отображения фигур
-        x_min = min([shape.x if isinstance(shape, Point) else min(shape.start.x, shape.end.x) if isinstance(shape,
-                                                                                                            Line) else shape.center.x - shape.radius if isinstance(
-            shape, Circle) else shape.top_left.x for shape in self.shapes])
-        x_max = max([shape.x if isinstance(shape, Point) else max(shape.start.x, shape.end.x) if isinstance(shape,
-                                                                                                            Line) else shape.center.x + shape.radius if isinstance(
-            shape, Circle) else shape.top_left.x + shape.side_length for shape in self.shapes])
-        y_min = min([shape.y if isinstance(shape, Point) else min(shape.start.y, shape.end.y) if isinstance(shape,
-                                                                                                            Line) else shape.center.y - shape.radius if isinstance(
-            shape, Circle) else shape.top_left.y - shape.side_length for shape in self.shapes])
-        y_max = max([shape.y if isinstance(shape, Point) else max(shape.start.y, shape.end.y) if isinstance(shape,
-                                                                                                            Line) else shape.center.y + shape.radius if isinstance(
-            shape, Circle) else shape.top_left.y for shape in self.shapes])
+        x_min = min([shape.x if isinstance(shape, Point) else min(shape.start.x, shape.end.x)
+                             if isinstance(shape, Line) else shape.center.x - shape.radius
+                             if isinstance(shape, Circle) else shape.top_left.x for shape in self.shapes])
+
+        x_max = max([shape.x if isinstance(shape, Point) else max(shape.start.x, shape.end.x)
+                             if isinstance(shape, Line) else shape.center.x + shape.radius
+                             if isinstance(shape, Circle) else shape.top_left.x + shape.side_length for shape in self.shapes])
+
+        y_min = min([shape.y if isinstance(shape, Point) else min(shape.start.y, shape.end.y)
+                             if isinstance(shape, Line) else shape.center.y - shape.radius
+                             if isinstance(shape, Circle) else shape.top_left.y - shape.side_length for shape in self.shapes])
+
+        y_max = max([shape.y if isinstance(shape, Point) else max(shape.start.y, shape.end.y)
+                             if isinstance(shape, Line) else shape.center.y + shape.radius
+                             if isinstance(shape, Circle) else shape.top_left.y for shape in self.shapes])
 
         ax.set_xlim(x_min - 1, x_max + 1)
         ax.set_ylim(y_min - 1, y_max + 1)
