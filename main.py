@@ -43,7 +43,6 @@ class Square:
 
 
 # Функция для отрисовки фигур с помощью matplotlib
-# Функция для отрисовки фигур с помощью matplotlib
 def plot_shape(shape, ax):
     if isinstance(shape, Point):
         ax.plot(shape.x, shape.y, 'ro')  # Точка (красный круг)
@@ -58,7 +57,7 @@ def plot_shape(shape, ax):
         ax.add_patch(rect)
 
 
-# Интерфейс командной строки
+# Интерфейс командной строки - редактор
 class Editor:
     def __init__(self):
         self.shapes = []  # Инициализация списка для хранения фигур
@@ -67,10 +66,10 @@ class Editor:
     def create_shape(self, shape_type, *args):
         try:
             if shape_type == "p":
-                x, y = map(float, args)  # преобразование аргументов в числа и распаковка в переменные
-                self.shapes.append(Point(x, y))  # добавление объекта Point в список shapes
+                x, y = map(float, args)            # преобразование аргументов в числа и распаковка в переменные
+                self.shapes.append(Point(x, y))    # добавление объекта Point в список shapes
                 print(f"Точка создана ({args})")
-                self.plot_all_shapes()  # выводим график с фигурами
+                self.plot_all_shapes()             # выводим график с фигурами
             elif shape_type == "l":
                 x1, y1, x2, y2 = map(float, args)
                 self.shapes.append(Line(Point(x1, y1), Point(x2, y2)))
@@ -98,18 +97,21 @@ class Editor:
         except ValueError:
             print("Ошибка: не все аргументы являются числами или введено больше аргументов, чем требуется.")
 
+    # Функция удаления фигуры
     def delete_shape(self, index):
         if 0 <= index < len(self.shapes):
             print("Удалена фигура:", self.shapes[index])
             self.shapes.pop(index)
         else:
             print("Неверный индекс")
-
+            
+    # Функция вывод списка фигур и графики
     def list_shapes(self):
         for i, shape in enumerate(self.shapes):
             print(f"{i}: ", end="")
             shape.display()
 
+    # Функция создания графики с фигурами
     def plot_all_shapes(self):
         if not self.shapes:
             print("Нет фигур для отображения.")
@@ -122,7 +124,7 @@ class Editor:
         for shape in self.shapes:
             plot_shape(shape, ax)
 
-        # Установка пределов графика
+        # Установка пределов графика для корректного отображения фигур
         x_min = min([shape.x if isinstance(shape, Point) else min(shape.start.x, shape.end.x) if isinstance(shape,
                                                                                                             Line) else shape.center.x - shape.radius if isinstance(
             shape, Circle) else shape.top_left.x for shape in self.shapes])
@@ -142,15 +144,16 @@ class Editor:
         plt.grid(False)
         plt.show()
 
+    # Функция ввода/приема команд
     def run(self):
         while True:
             command = input(
-                "Введите команду (help - помощь): ").strip().split()  # обрезаем пробелы по краям и разбиваем строку на слова
+                "Введите команду (help - помощь): ").strip().split()    # обрезаем пробелы по краям и разбиваем строку на слова
             if not command:
                 continue
 
             if command[0] == "add":
-                if len(command) < 2:  # проверка на заполнение аргументов
+                if len(command) < 2:                         # проверка на заполнение аргументов
                     print("Недостаточно аргументов")
                     continue
                 self.create_shape(command[1], *command[2:])  # создание фигуры
@@ -168,18 +171,16 @@ class Editor:
                 if len(self.shapes) == 0:
                     print("Не добавлено ни одной фигуры.")
                 else:
-                    self.list_shapes()
-                    self.plot_all_shapes()
+                    self.list_shapes()                       # вывод списка фигур
+                    self.plot_all_shapes()                   # вывод графики
 
             elif command[0] == "help":
                 print("add <p|l|cir|sq> <x> <y> - создание фигуры")
                 print("---")
                 print("Cоздание точки: add p <x> <y>  (x, y - координаты точки)")
-                print(
-                    "Cоздание отрезка: add l <x1> <y1> <x2> <y2> (x1, y1 и x2, y2 - координаты начала и конца отрезка)")
+                print("Cоздание отрезка: add l <x1> <y1> <x2> <y2> (x1, y1 и x2, y2 - координаты начала и конца отрезка)")
                 print("Cоздание круга: add cir <x> <y> <radius> (x, y - координаты центра, radius - радиус круга")
-                print(
-                    "Cоздание квадрата: add sq <x> <y> <side_length> (x, y - координаты верхнего левого угла, side_length - длина стороны квадрата")
+                print("Cоздание квадрата: add sq <x> <y> <side_length> (x, y - координаты верхнего левого угла, side_length - длина стороны квадрата")
                 print("===")
                 print("del <номер> - удаление фигуры")
                 print("list - список фигур")
