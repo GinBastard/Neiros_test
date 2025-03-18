@@ -1,17 +1,9 @@
+import pickle
 from dataclasses import dataclass
 import matplotlib.pyplot as plt
-from matplotlib.patches import Ellipse
-from matplotlib.patches import Polygon
+from matplotlib.patches import Ellipse, Polygon
 
-
-# Функция вывода в консоль или в файл
-def output_(file, output):
-    if file:
-        file.write(output + '\n')   # Записываем в файл
-    else:
-        print(output)               # Выводим в консоль
-
-
+         # Выводим в консоль
 # Создаем классы фигур
 # У каждого класса есть свои атрибуты и метод для отображения информации о себе
 @dataclass
@@ -20,9 +12,7 @@ class Point:
     y: float
 
     def display(self, file=None):       # По-умолчанию выводим в консоль (file=None)
-        output = f"Точка: координаты ({self.x}, {self.y})"
-        output_(file, output)
-
+        print(f"Точка: координаты ({self.x}, {self.y})")
 
 @dataclass
 class Line:
@@ -30,8 +20,8 @@ class Line:
     end: Point
 
     def display(self, file=None):
-        output = f"Отрезок: координаты начала ({self.start.x}, {self.start.y}), координаты окончания ({self.end.x}, {self.end.y})"
-        output_(file, output)
+        print(f"Отрезок: координаты начала ({self.start.x}, {self.start.y}), координаты окончания ({self.end.x}, {self.end.y})")
+
 
 @dataclass
 class Circle:
@@ -39,8 +29,7 @@ class Circle:
     radius: float
 
     def display(self, file=None):
-        output = f"Круг: координаты центра ({self.center.x}, {self.center.y}), радиус {self.radius}"
-        output_(file, output)
+        print(f"Круг: координаты центра ({self.center.x}, {self.center.y}), радиус {self.radius}")
 
 @dataclass
 class Square:
@@ -48,8 +37,7 @@ class Square:
     side_length: float
 
     def display(self, file=None):
-        output = f"Квадрат: координаты верхнего левого угла ({self.top_left.x}, {self.top_left.y}), длина стороны {self.side_length}"
-        output_(file, output)
+        print(f"Квадрат: координаты верхнего левого угла ({self.top_left.x}, {self.top_left.y}), длина стороны {self.side_length}")
 
 @dataclass
 class Rectangle:
@@ -58,9 +46,8 @@ class Rectangle:
     b_side_length: float
 
     def display(self, file=None):
-        output = (f"Прямоугольник: координаты верхнего левого угла ({self.top_left.x}, {self.top_left.y}), "
+        print(f"Прямоугольник: координаты верхнего левого угла ({self.top_left.x}, {self.top_left.y}), "
                   f"длина первой стороны {self.a_side_length}, длина второй стороны {self.b_side_length}")
-        output_(file, output)
 
 @dataclass
 class Oval:
@@ -69,8 +56,7 @@ class Oval:
     height: float
 
     def display(self, file=None):
-        output = f"Овал: координаты центра ({self.center.x}, {self.center.y}), ширина {self.width}, высота {self.height}"
-        output_(file, output)
+        print(f"Овал: координаты центра ({self.center.x}, {self.center.y}), ширина {self.width}, высота {self.height}")
 
 @dataclass
 class Triangle:
@@ -79,11 +65,9 @@ class Triangle:
     top3: Point
 
     def display(self, file=None):
-        output = (f"Треугольник: координаты 1-ой вершины ({self.top1.x}, {self.top1.y}), "
+        print(f"Треугольник: координаты 1-ой вершины ({self.top1.x}, {self.top1.y}), "
             f"координаты 2-ой вершины ({self.top2.x}, {self.top2.y}), "
             f"координаты 3-ей вершины ({self.top3.x}, {self.top3.y})")
-        output_(file, output)
-
 
 # Функция для отрисовки фигур с помощью matplotlib
 def plot_shape(shape, ax):
@@ -119,6 +103,21 @@ def plot_shape(shape, ax):
 class Editor:
     def __init__(self):
         self.shapes = []  # Инициализация списка для хранения фигур
+
+        # Функция сохранения списка фигур в файл
+    def save_shapes(self):
+        with open("shapes_list.pkl", 'wb') as file:         # Открываем файл в бинарном режиме для записи
+            pickle.dump(self.shapes, file)                  # Сериализуем список фигур с помощью pickle и записываем в файл
+        print("Файл shapes_list.pkl сохранен в текущей директории.")
+
+        # Функция загрузки списка фигур из файла
+    def load_shapes(self):
+        try:
+            with open("shapes_list.pkl", 'rb') as file:
+                self.shapes = pickle.load(file)              # Десериализуем список фигур из файла
+            print("Фигуры успешно загружены из файла shapes_list.pkl.")
+        except FileNotFoundError:
+            print("Файл shapes_list.pkl не найден.")
 
     # Функция создания фигуры
     def create_shape(self, shape_type, *args):
@@ -286,11 +285,10 @@ class Editor:
                     self.plot_all_shapes()                   # вывод графики
 
             elif command[0] == "save":
-                with open("shapes_list.txt", 'w', encoding='utf-8') as file:  # Открываем файл для записи
-                    for i, shape in enumerate(self.shapes):
-                        file.write(f"{i}: ")  # Записываем индекс фигуры
-                        shape.display(file)  # Записываем информацию о фигуре
-                print("Файл shapes_list.txt сохранен в текущей директории.")
+                self.save_shapes()
+
+            elif command[0] == "load":
+                self.load_shapes()
 
             elif command[0] == "help":
                 print("****************************************************************************************")
@@ -314,6 +312,7 @@ class Editor:
                 print("   del <номер> - удаление фигуры")
                 print("   list - вывести список фигур")
                 print("   save - сохранить список фигур в файл")
+                print("   load - загрузить список фигур из файла")
                 print("   exit - выход из программы")
                 print("****************************************************************************************\n")
 
