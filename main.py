@@ -228,11 +228,11 @@ class Editor:
         ])
 
         y_min = min([
-            shape.y if isinstance(shape, Point)                              # Для точки
-            else min(shape.start.y, shape.end.y) if isinstance(shape, Line)  # Для линии
-            else min(shape.top1.y, shape.top2.y, shape.top3.y) if isinstance(shape, Triangle)  # Для треугольника
-            else shape.center.y - shape.radius if isinstance(shape, Circle)  # Для круга
-            else shape.center.y - max(shape.width, shape.height) if isinstance(shape, Oval)  # Для овала
+            shape.y if isinstance(shape, Point)
+            else min(shape.start.y, shape.end.y) if isinstance(shape, Line)
+            else min(shape.top1.y, shape.top2.y, shape.top3.y) if isinstance(shape, Triangle)
+            else shape.center.y - shape.radius if isinstance(shape, Circle)                                       
+            else shape.center.y - max(shape.width, shape.height) if isinstance(shape, Oval)
             else shape.top_left.y - max(shape.a_side_length, shape.b_side_length) if isinstance(shape, Rectangle) # Для прямоугольника (нижняя граница)
             else shape.top_left.y - shape.side_length                                                             # Для квадрата (нижняя граница)
             for shape in self.shapes
