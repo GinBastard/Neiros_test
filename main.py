@@ -71,17 +71,19 @@ class Triangle:
 # Функция для отрисовки фигур с помощью matplotlib
 def plot_shape(shape, ax):
     if isinstance(shape, Point):
-        ax.plot(shape.x, shape.y, 'ro')  # Точка (красный круг)
+        ax.plot(shape.x, shape.y, 'ro')                                                                 # Точка (красный круг)
     elif isinstance(shape, Line):
-        ax.plot([shape.start.x, shape.end.x], [shape.start.y, shape.end.y], 'blue')  # Линия (синяя линия)
+        ax.plot([shape.start.x, shape.end.x], [shape.start.y, shape.end.y], 'blue')                     # Линия (синяя линия)
     elif isinstance(shape, Circle):
         circle = plt.Circle((shape.center.x, shape.center.y), shape.radius, color='green', fill=False)  # Круг (зеленый круг)
         ax.add_patch(circle)
     elif isinstance(shape, Square):
-        rect = plt.Rectangle((shape.top_left.x, shape.top_left.y - shape.side_length), shape.side_length, shape.side_length, color='orange', fill=False)  # Квадрат (оранжевый квадрат)
+        rect = plt.Rectangle((shape.top_left.x, shape.top_left.y - shape.side_length),
+                             shape.side_length, shape.side_length, color='orange', fill=False)          # Квадрат (оранжевый квадрат)
         ax.add_patch(rect)
     elif isinstance(shape, Rectangle):
-        rect2 = plt.Rectangle((shape.top_left.x, shape.top_left.y - shape.b_side_length), shape.a_side_length, shape.b_side_length, color='violet', fill=False)  # Прямоугольник (фиолетовый)
+        rect2 = plt.Rectangle((shape.top_left.x, shape.top_left.y - shape.b_side_length),
+                              shape.a_side_length, shape.b_side_length, color='violet', fill=False)     # Прямоугольник (фиолетовый)
         ax.add_patch(rect2)
     elif isinstance(shape, Oval):
         oval = Ellipse(xy=(shape.center.x, shape.center.y),  # Центр овала
