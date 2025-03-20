@@ -3,7 +3,6 @@ from dataclasses import dataclass
 import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse, Polygon
 
-         # Выводим в консоль
 # Создаем классы фигур
 # У каждого класса есть свои атрибуты и метод для отображения информации о себе
 @dataclass
@@ -11,7 +10,7 @@ class Point:
     x: float
     y: float
 
-    def display(self, file=None):       # По-умолчанию выводим в консоль (file=None)
+    def display(self):
         print(f"Точка: координаты ({self.x}, {self.y})")
 
 @dataclass
@@ -19,7 +18,7 @@ class Line:
     start: Point  # используем экземпляры класса Point для создания отрезка
     end: Point
 
-    def display(self, file=None):
+    def display(self):
         print(f"Отрезок: координаты начала ({self.start.x}, {self.start.y}), координаты окончания ({self.end.x}, {self.end.y})")
 
 
@@ -28,7 +27,7 @@ class Circle:
     center: Point
     radius: float
 
-    def display(self, file=None):
+    def display(self):
         print(f"Круг: координаты центра ({self.center.x}, {self.center.y}), радиус {self.radius}")
 
 @dataclass
@@ -36,7 +35,7 @@ class Square:
     top_left: Point
     side_length: float
 
-    def display(self, file=None):
+    def display(self):
         print(f"Квадрат: координаты верхнего левого угла ({self.top_left.x}, {self.top_left.y}), длина стороны {self.side_length}")
 
 @dataclass
@@ -45,7 +44,7 @@ class Rectangle:
     a_side_length: float
     b_side_length: float
 
-    def display(self, file=None):
+    def display(self):
         print(f"Прямоугольник: координаты верхнего левого угла ({self.top_left.x}, {self.top_left.y}), "
                   f"длина первой стороны {self.a_side_length}, длина второй стороны {self.b_side_length}")
 
@@ -55,7 +54,7 @@ class Oval:
     width: float
     height: float
 
-    def display(self, file=None):
+    def display(self):
         print(f"Овал: координаты центра ({self.center.x}, {self.center.y}), ширина {self.width}, высота {self.height}")
 
 @dataclass
@@ -64,7 +63,7 @@ class Triangle:
     top2: Point
     top3: Point
 
-    def display(self, file=None):
+    def display(self):
         print(f"Треугольник: координаты 1-ой вершины ({self.top1.x}, {self.top1.y}), "
             f"координаты 2-ой вершины ({self.top2.x}, {self.top2.y}), "
             f"координаты 3-ей вершины ({self.top3.x}, {self.top3.y})")
@@ -89,12 +88,12 @@ def plot_shape(shape, ax):
                        width=shape.width,                    # Ширина
                        height=shape.height,                  # Высота
                        color='black',                        # Цвет
-                       fill=False)                           # Без заливки  Овал (черный)
+                       fill=False)                           # Без заливки
         ax.add_patch(oval)
     elif isinstance(shape, Triangle):
         triangle = Polygon(
             [(shape.top1.x, shape.top1.y), (shape.top2.x, shape.top2.y), (shape.top3.x, shape.top3.y)],  # Список координат вершин
-            color='red',  # красный
+            color='red',
             fill=False)
         ax.add_patch(triangle)
 
@@ -173,7 +172,7 @@ class Editor:
                 print("Неизвестный тип фигуры")
 
         except ValueError:
-            print("Ошибка: не все аргументы являются числами или введено больше аргументов, чем требуется.")
+            print("Ошибка: не все аргументы являются числами или введено неправильное количество аргументов.")
 
     # Функция удаления фигуры
     def delete_shape(self, index):
@@ -206,23 +205,23 @@ class Editor:
             # Вычисляем минимальное и максимальное значение координат X и Y
 
         x_min = min([
-            shape.x if isinstance(shape, Point)                               # Для точки
-            else min(shape.start.x, shape.end.x) if isinstance(shape, Line)   # Для отрезка
+            shape.x if isinstance(shape, Point)                                                # Для точки
+            else min(shape.start.x, shape.end.x) if isinstance(shape, Line)                    # Для отрезка
             else min(shape.top1.x, shape.top2.x, shape.top3.x) if isinstance(shape, Triangle)  # Для треугольника
-            else shape.center.x - shape.radius if isinstance(shape, Circle)   # Для круга
-            else shape.center.x - max(shape.width, shape.height) if isinstance(shape, Oval)  # Для овала
-            else shape.top_left.x                                             # Для квадрата (левая граница)
+            else shape.center.x - shape.radius if isinstance(shape, Circle)                    # Для круга
+            else shape.center.x - max(shape.width, shape.height) if isinstance(shape, Oval)    # Для овала
+            else shape.top_left.x                                                              # Для квадрата (левая граница)
             for shape in self.shapes
         ])
 
         x_max = max([
-            shape.x if isinstance(shape, Point)                              # Для точки
-            else max(shape.start.x, shape.end.x) if isinstance(shape, Line)  # Для линии
-            else max(shape.top1.x, shape.top2.x, shape.top3.x) if isinstance(shape, Triangle)  # Для треугольника
-            else shape.center.x + shape.radius if isinstance(shape, Circle)  # Для круга
-            else shape.center.x + max(shape.width, shape.height) if isinstance(shape, Oval)  # Для овала
+            shape.x if isinstance(shape, Point)
+            else max(shape.start.x, shape.end.x) if isinstance(shape, Line)
+            else max(shape.top1.x, shape.top2.x, shape.top3.x) if isinstance(shape, Triangle)
+            else shape.center.x + shape.radius if isinstance(shape, Circle)
+            else shape.center.x + max(shape.width, shape.height) if isinstance(shape, Oval)
             else shape.top_left.x + max(shape.a_side_length, shape.b_side_length) if isinstance(shape, Rectangle)  # Для прямоугольника (правая граница)
-            else shape.top_left.x + shape.side_length                        # Для квадрата  (правая граница)
+            else shape.top_left.x + shape.side_length                                                              # Для квадрата  (правая граница)
             for shape in self.shapes
         ])
 
@@ -233,17 +232,17 @@ class Editor:
             else shape.center.y - shape.radius if isinstance(shape, Circle)  # Для круга
             else shape.center.y - max(shape.width, shape.height) if isinstance(shape, Oval)  # Для овала
             else shape.top_left.y - max(shape.a_side_length, shape.b_side_length) if isinstance(shape, Rectangle) # Для прямоугольника (нижняя граница)
-            else shape.top_left.y - shape.side_length                        # Для квадрата (нижняя граница)
+            else shape.top_left.y - shape.side_length                                                             # Для квадрата (нижняя граница)
             for shape in self.shapes
         ])
 
         y_max = max([
-            shape.y if isinstance(shape, Point)                              # Для точки
-            else max(shape.start.y, shape.end.y) if isinstance(shape, Line)  # Для линии
-            else max(shape.top1.y, shape.top2.y, shape.top3.y) if isinstance(shape, Triangle)  # Для треугольника
-            else shape.center.y + shape.radius if isinstance(shape, Circle)  # Для круга
-            else shape.center.y + max(shape.width, shape.height) if isinstance(shape, Oval)  # Для овала
-            else shape.top_left.y                                            # Для квадрата и прямоугольника (верхняя граница)
+            shape.y if isinstance(shape, Point)
+            else max(shape.start.y, shape.end.y) if isinstance(shape, Line)
+            else max(shape.top1.y, shape.top2.y, shape.top3.y) if isinstance(shape, Triangle)
+            else shape.center.y + shape.radius if isinstance(shape, Circle)
+            else shape.center.y + max(shape.width, shape.height) if isinstance(shape, Oval)
+            else shape.top_left.y                                                                                 # Для квадрата и прямоугольника (верхняя граница)
             for shape in self.shapes
         ])
 
@@ -263,10 +262,10 @@ class Editor:
                 continue
 
             if command[0] == "add":
-                if len(command) < 2:                         # проверка на заполнение аргументов
+                if len(command) < 2:                                    # проверка на заполнение аргументов
                     print("Недостаточно аргументов")
                     continue
-                self.create_shape(command[1], *command[2:])  # создание фигуры
+                self.create_shape(command[1], *command[2:])             # создание фигуры
 
             elif command[0] == "del":
                 if len(self.shapes) == 0:
